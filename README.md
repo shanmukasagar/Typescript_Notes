@@ -270,10 +270,274 @@ type GreetFunction = (name: string) => string;
 
 ---
 
+# 📘 TypeScript Notes – Part 2
+
+## ✅ `readonly` – Makes a property non-editable
+
+**🔹 Meaning:** You cannot change this property's value after the object is created.
+
+```ts
+interface User {
+  readonly id: number;
+  name: string;
+}
+
+const user: User = {
+  id: 1,
+  name: "Sagar"
+};
+
+user.name = "Shanmukasagar"; // ✅ Allowed
+user.id = 2; // ❌ Error: Cannot assign to 'id' because it is a read-only property.
+```
+
+---
+
+## ✅ `?` (Optional) – Makes a property not required
+
+**🔹 Meaning:** This property may or may not exist on the object.
+
+```ts
+interface User {
+  name: string;
+  age?: number; // optional
+}
+
+const user1: User = { name: "Sagar" }; // ✅ age is optional
+const user2: User = { name: "Sagar", age: 25 }; // ✅ also valid
+```
+
+---
+
+## 🧩 Combine `readonly` and `optional`
+
+```ts
+interface User {
+  readonly id?: number; // optional and readonly
+  name: string;
+}
+```
+
+---
+
+## ✅ Array in TypeScript (Typed Arrays)
+
+### 🔸 1. Array of Strings
+```ts
+let names: string[] = ["Sagar", "John"];
+names.push("Alice"); // ✅
+names.push(123); // ❌ Error: number not assignable to string
+```
+
+### 🔸 2. Array of Numbers
+```ts
+let scores: number[] = [90, 85, 75];
+```
+
+### 🔸 3. Array of Booleans
+```ts
+let flags: boolean[] = [true, false];
+```
+
+### 🔸 4. Array of Objects
+```ts
+type User = {
+  name: string;
+  age: number;
+};
+
+let users: User[] = [
+  { name: "Sagar", age: 25 },
+  { name: "John", age: 30 }
+];
+```
+
+### 🔸 5. Readonly Arrays
+```ts
+const items: readonly string[] = ["A", "B"];
+// items.push("C"); ❌ Error: Cannot modify readonly array
+```
+
+### 🔸 6. Alternative Syntax – `Array<Type>`
+```ts
+let prices: Array<number> = [10, 20, 30];
+// Same as number[]
+```
+
+---
+
+## ✅ What is a Union Type?
+
+A Union Type allows a variable to have more than one type.
+
+```ts
+type Variable = type1 | type2 | type3;
+```
+
+### 🔸 1. Basic Example
+```ts
+let value: string | number;
+
+value = "Shanmukasagar"; // ✅
+value = 123;              // ✅
+value = true;             // ❌ Error
+```
+
+### 🔸 2. Union in Function Parameters
+```ts
+function printId(id: string | number) {
+  console.log("ID:", id);
+}
+```
+
+### 🔸 3. Narrowing Union Types
+```ts
+function greet(user: string | string[]) {
+  if (typeof user === "string") {
+    console.log("Hello " + user.toUpperCase());
+  } else {
+    user.forEach(u => console.log("Hello " + u.toUpperCase()));
+  }
+}
+```
+
+### 🔸 4. Union of Object Types
+```ts
+type Admin = { role: "admin"; accessLevel: number };
+type User = { role: "user"; email: string };
+
+type Person = Admin | User;
+
+const person1: Person = { role: "admin", accessLevel: 5 };
+const person2: Person = { role: "user", email: "sagar@mail.com" };
+```
+
+### 🔸 5. Literal Union Types
+```ts
+type Status = "loading" | "success" | "error";
+
+let currentStatus: Status = "loading"; // ✅
+currentStatus = "failed"; // ❌ Error
+```
+
+---
+
+## ✅ What is a Tuple?
+
+A tuple is a fixed-length, ordered array where each element has a specific type and position.
+
+### 🔸 1. Basic Tuple Example
+```ts
+let user: [string, number];
+
+user = ["Sagar", 25];        // ✅ Correct
+user = [25, "Sagar"];        // ❌ Wrong order
+user = ["Sagar", 25, true];  // ❌ Too many items
+```
+
+### 🔸 2. Tuple in Functions
+```ts
+function getUser(): [string, number] {
+  return ["Sagar", 25];
+}
+
+const [name, age] = getUser(); // name = string, age = number
+```
+
+### 🔸 3. Optional Tuple Elements
+```ts
+type UserInfo = [string, number?, boolean?];
+
+const u1: UserInfo = ["Sagar"];
+const u2: UserInfo = ["Sagar", 25];
+const u3: UserInfo = ["Sagar", 25, true];
+```
+
+### 🔸 4. Named Tuples (for clarity)
+```ts
+type Response = [statusCode: number, message: string];
+
+const res: Response = [200, "OK"];
+```
+
+### 🔸 5. Tuple vs Array
+
+| Feature              | Tuple        | Array                      |
+|----------------------|--------------|-----------------------------|
+| 📐 Fixed Length      | ✅ Yes       | ❌ No                        |
+| 🎯 Typed by Position | ✅ Yes       | ❌ All elements same type    |
+| ✅ Use Case          | Return multiple values | Store list of same type |
+
+---
+
+## ✅ What is an Enum?
+
+An enum lets you define a set of named constant values.
+
+### 🔸 1. Basic Enum Example
+```ts
+enum Direction {
+  Up,
+  Down,
+  Left,
+  Right
+}
+
+let move: Direction = Direction.Up;
+console.log(move); // 0 (starts from 0 by default)
+```
+
+### 🔸 2. Custom Enum Values
+```ts
+enum StatusCode {
+  Success = 200,
+  NotFound = 404,
+  ServerError = 500
+}
+
+let code: StatusCode = StatusCode.NotFound;
+console.log(code); // 404
+```
+
+### 🔸 3. String Enums
+```ts
+enum Status {
+  Loading = "loading",
+  Success = "success",
+  Error = "error"
+}
+
+let state: Status = Status.Success;
+console.log(state); // "success"
+```
+
+✅ Use string enums for readable values.
+
+### 🔸 4. Enum in Conditions
+```ts
+enum Role {
+  Admin,
+  User,
+  Guest
+}
+
+function checkRole(role: Role) {
+  if (role === Role.Admin) {
+    console.log("Access granted");
+  } else {
+    console.log("Access denied");
+  }
+}
+
+checkRole(Role.Admin);
+```
+
+---
+
 ## 👨‍💻 Author
 
 **Shanmukasagar**  
 Full-stack MERN Developer | Passionate about TypeScript & clean code  
-📫 [LinkedIn](https://www.linkedin.com) *(Add your profile link)*
+📫 [LinkedIn](https://www.linkedin.com/in/shanmukasagar/) 
 
 ---
